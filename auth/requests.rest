@@ -1,0 +1,36 @@
+POST http://taskmanager.dev/api/users/signup
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "password"
+}
+
+###
+
+POST http://taskmanager.dev/api/users/signin
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "password"
+}
+
+###
+
+GET http://taskmanager.dev/api/users/currentuser
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZmY1NTZlNTkwYjhkMDAxOGZkNGRlMyIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsImlhdCI6MTU5Mzg1MjQ5MCwiZXhwIjoxNTkzODUzMzkwfQ.yaTgwfV2k-EhsmyTGlRVZApKDxXPsoOVvV1MSMd_hrk
+
+###
+
+POST http://taskmanager.dev/api/users/signout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZmY1NTZlNTkwYjhkMDAxOGZkNGRlMyIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsImlhdCI6MTU5Mzg1MjQ5MCwiZXhwIjoxNTkzODUzMzkwfQ.yaTgwfV2k-EhsmyTGlRVZApKDxXPsoOVvV1MSMd_hrk
+
+###
+
+POST http://taskmanager.dev/api/users/token
+Content-Type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZmY1NTZlNTkwYjhkMDAxOGZkNGRlMyIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsImlhdCI6MTU5Mzg1MjUzMH0.9LC1isBdvOauOyjmwgtRW_zH0CczKPH2B3x1n4YsYP4"
+}

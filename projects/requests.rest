@@ -1,0 +1,17 @@
+POST http://taskmanager.dev/api/projects
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMGM0YTg1MTU5YTBkMDAyMzU2M2ExYSIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsImlhdCI6MTU5NDY0MjMxOCwiZXhwIjoxNTk0NjQzMjE4fQ.2LwQdYLRuZDEPk0jmSM8bX3RhGYGg2fZiQi_w7vASLM
+
+{
+  "name": "proj 1"
+}
+
+###
+
+GET http://taskmanager.dev/api/projects/5f0c4ab3a6fa080018b35b13
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMGM0YTg1MTU5YTBkMDAyMzU2M2ExYSIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsImlhdCI6MTU5NDY0MjMxOCwiZXhwIjoxNTk0NjQzMjE4fQ.2LwQdYLRuZDEPk0jmSM8bX3RhGYGg2fZiQi_w7vASLM
+
+###
+
+DELETE http://taskmanager.dev/api/projects/5f0c4ab3a6fa080018b35b13
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMGM0YTg1MTU5YTBkMDAyMzU2M2ExYSIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsImlhdCI6MTU5NDY0MjMxOCwiZXhwIjoxNTk0NjQzMjE4fQ.2LwQdYLRuZDEPk0jmSM8bX3RhGYGg2fZiQi_w7vASLM
