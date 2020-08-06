@@ -20,7 +20,7 @@ kubectl create secret generic jwt-refresh-secret --from-literal=JWT_REFRESH_KEY=
 
 2.1 - Have skaffold installed on your operating system (https://skaffold.dev/).
 
-2.2 - On the command line on the folder "micro-task-manager" (where skaffold.yaml file is), type "skaffold dev".
+2.2 - On the command line on the folder where skaffold.yaml file is, type "skaffold dev".
 
 Notes:
 
