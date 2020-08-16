@@ -2,6 +2,7 @@ import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import { mount } from 'enzyme';
 import history from '../history';
+import { wait } from '../setupTests';
 import Root from '../Root';
 import App from '../components/App';
 
@@ -17,7 +18,7 @@ beforeEach(() => {
   );
 });
 
-it('signs up successfully and goes to project list', done => {
+it('signs up successfully and goes to project list', async () => {
   wrapped.find('a[href="/signup"]').simulate('click', { button: 0 });
   wrapped.update();
 
@@ -33,13 +34,10 @@ it('signs up successfully and goes to project list', done => {
 
   wrapped.find('form').simulate('submit');
 
-  // Need to find annother solution
-  setImmediate(() => {
-    wrapped.update();
-
-    expect(wrapped.find('h2').length).toEqual(1);
-    expect(wrapped.find('h2').text()).toEqual('Projects');
-
-    done();
+  await wait(wrapped, w => {
+    return w.find('h2').at(0).exists();
   });
+
+  expect(wrapped.find('h2').length).toEqual(1);
+  expect(wrapped.find('h2').text()).toEqual('Projects');
 });
