@@ -29,16 +29,25 @@ import {
   UPDATE_TASK,
   DELETE_TASK
 } from './types';
-import refreshExpiredToken from '../helpers/refreshExpiredToken';
 import { successNotification, errorNotification } from './notifications';
 import errorMessageCompiler from '../helpers/errorMessageCompiler';
+import {
+  setRefreshToken,
+  setAccessToken,
+  clearTokens,
+  getRefreshToken,
+  getAccessToken
+} from '../helpers/localStorageService';
+import setHeaders from '../helpers/setHeaders';
 
 export const signup = formProps => async dispatch => {
   try {
     const response = await signupRequest(formProps);
 
-    localStorage.setItem('refreshToken', response.data.user.refreshToken);
-    localStorage.setItem('accessToken', response.data.accessToken);
+    setRefreshToken(response.data.user.refreshToken);
+    setAccessToken(response.data.accessToken);
+
+    setHeaders(response.data.accessToken);
 
     dispatch({
       type: AUTH_USER,
@@ -60,8 +69,10 @@ export const signin = formProps => async dispatch => {
   try {
     const response = await signinRequest(formProps);
 
-    localStorage.setItem('refreshToken', response.data.user.refreshToken);
-    localStorage.setItem('accessToken', response.data.accessToken);
+    setRefreshToken(response.data.user.refreshToken);
+    setAccessToken(response.data.accessToken);
+
+    setHeaders(response.data.accessToken);
 
     dispatch({
       type: AUTH_USER,
@@ -80,12 +91,11 @@ export const signin = formProps => async dispatch => {
 };
 
 export const signout = () => {
-  return async function signoutThunk(dispatch) {
+  return async dispatch => {
     try {
       await signoutRequest();
 
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('accessToken');
+      clearTokens();
 
       dispatch({
         type: AUTH_USER,
@@ -93,12 +103,6 @@ export const signout = () => {
       });
       history.push('/');
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        signoutThunk(dispatch);
-        return;
-      }
-
       dispatch({
         type: AUTH_ERROR,
         payload: error.response.data.errors || null
@@ -111,13 +115,26 @@ export const signout = () => {
 
 export const renewAccessToken = () => async dispatch => {
   try {
-    if (!localStorage.getItem('refreshToken')) {
+    if (!getRefreshToken()) {
+      dispatch({
+        type: AUTH_USER,
+        payload: false
+      });
+      return;
+    }
+    if (getAccessToken()) {
+      setHeaders(getAccessToken());
+      dispatch({
+        type: AUTH_USER,
+        payload: true
+      });
       return;
     }
 
     const response = await renewAccessTokenRequest();
 
-    localStorage.setItem('accessToken', response.data.accessToken);
+    setAccessToken(response.data.accessToken);
+    setHeaders(response.data.accessToken);
 
     dispatch({
       type: AUTH_USER,
@@ -141,44 +158,31 @@ export const forceLogout = () => {
 };
 
 export const getProjects = () => {
-  return async function getProjectsThunk(dispatch) {
+  return async dispatch => {
     try {
       const response = await getProjectsRequest();
 
       dispatch({ type: GET_PROJECTS, payload: response.data });
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        getProjectsThunk(dispatch);
-        return;
-      }
-
       dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
 };
 
-export const getProject = projectId =>
-  async function getProjectThunk(dispatch) {
-    try {
-      const response = await getProjectRequest(projectId);
+export const getProject = projectId => async dispatch => {
+  try {
+    const response = await getProjectRequest(projectId);
 
-      dispatch({ type: GET_PROJECT, payload: response.data });
-    } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        getProjectThunk(dispatch);
-        return;
-      }
-
-      dispatch(errorNotification(errorMessageCompiler(error)));
-      console.error(error);
-    }
-  };
+    dispatch({ type: GET_PROJECT, payload: response.data });
+  } catch (error) {
+    dispatch(errorNotification(errorMessageCompiler(error)));
+    console.error(error);
+  }
+};
 
 export const newProject = formValues => {
-  return async function newProjectThunk(dispatch) {
+  return async dispatch => {
     try {
       const response = await newProjectRequest(formValues);
 
@@ -186,12 +190,6 @@ export const newProject = formValues => {
       history.push('/projects/list');
       dispatch(successNotification(`Project ${formValues.name} created`));
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        newProjectThunk(dispatch);
-        return;
-      }
-
       dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
@@ -199,7 +197,7 @@ export const newProject = formValues => {
 };
 
 export const updateProject = (projectId, formValues) => {
-  return async function updateProjectThunk(dispatch) {
+  return async dispatch => {
     try {
       const response = await updateProjectRequest(projectId, formValues);
 
@@ -209,12 +207,6 @@ export const updateProject = (projectId, formValues) => {
         successNotification(`Project ${response.data.name} has been updated`)
       );
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        updateProjectThunk(dispatch);
-        return;
-      }
-
       dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
@@ -222,7 +214,7 @@ export const updateProject = (projectId, formValues) => {
 };
 
 export const deleteProject = projectId => {
-  return async function deleteProjectThunk(dispatch) {
+  return async dispatch => {
     try {
       await deleteProjectRequest(projectId);
 
@@ -230,12 +222,6 @@ export const deleteProject = projectId => {
       history.push('/projects/list');
       dispatch(successNotification('Project deleted'));
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        deleteProjectThunk(dispatch);
-        return;
-      }
-
       dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
@@ -243,18 +229,12 @@ export const deleteProject = projectId => {
 };
 
 export const getTasks = projectId => {
-  return async function getTasksThunk(dispatch) {
+  return async dispatch => {
     try {
       const response = await getTasksRequest(projectId);
 
       dispatch({ type: GET_TASKS, payload: response.data });
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        getTasksThunk(dispatch);
-        return;
-      }
-
       dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
@@ -262,18 +242,12 @@ export const getTasks = projectId => {
 };
 
 export const getTask = taskId => {
-  return async function getTaskThunk(dispatch) {
+  return async dispatch => {
     try {
       const response = await getTaskRequest(taskId);
 
       dispatch({ type: GET_TASK, payload: response.data });
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        getTaskThunk(dispatch);
-        return;
-      }
-
       dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
@@ -281,7 +255,7 @@ export const getTask = taskId => {
 };
 
 export const newTask = (formValues, projectId) => {
-  return async function newTaskThunk(dispatch) {
+  return async dispatch => {
     try {
       const response = await newTaskRequest(formValues, projectId);
 
@@ -289,12 +263,6 @@ export const newTask = (formValues, projectId) => {
       history.push(`/projects/${projectId}`);
       dispatch(successNotification(`Task created`));
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        newTaskThunk(dispatch);
-        return;
-      }
-
       dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
@@ -302,7 +270,7 @@ export const newTask = (formValues, projectId) => {
 };
 
 export const updateTask = (taskId, formValues) => {
-  return async function updateTaskThunk(dispatch) {
+  return async dispatch => {
     try {
       const response = await updateTaskRequest(taskId, formValues);
 
@@ -311,12 +279,6 @@ export const updateTask = (taskId, formValues) => {
       history.push(`/projects/${formValues.projectId}`);
       dispatch(successNotification('Task updated'));
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        updateTaskThunk(dispatch);
-        return;
-      }
-
       dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
@@ -324,7 +286,7 @@ export const updateTask = (taskId, formValues) => {
 };
 
 export const deleteTask = (taskId, projectId) => {
-  return async function deleteTaskThunk(dispatch) {
+  return async dispatch => {
     try {
       await deleteTaskRequest(taskId);
 
@@ -333,12 +295,6 @@ export const deleteTask = (taskId, projectId) => {
       history.push(`/projects/${projectId}`);
       dispatch(successNotification('Task deleted'));
     } catch (error) {
-      if (error.response.data.errors[0].message === 'jwt expired') {
-        await refreshExpiredToken();
-        deleteTaskThunk(dispatch);
-        return;
-      }
-
       dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
