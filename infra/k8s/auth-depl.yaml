@@ -17,9 +17,9 @@ spec:
           image: jorge00alves/micro-tm-auth
           env:
             - name: MONGO_URI
-              value: 'mongodb://auth-mongo-srv:27017/auth'
+              value: "mongodb://auth-mongo-srv:27017/auth"
             - name: JWT_EXPIRES_IN
-              value: '15m'
+              value: "15m"
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:

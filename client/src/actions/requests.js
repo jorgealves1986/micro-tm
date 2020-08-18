@@ -1,6 +1,7 @@
 import auth from '../apis/auth';
 import projects from '../apis/projects';
 import tasks from '../apis/tasks';
+import { getRefreshToken } from '../helpers/localStorageService';
 
 export const signupRequest = async formValues => {
   return auth.post('/signup', formValues);
@@ -11,112 +12,56 @@ export const signinRequest = async formValues => {
 };
 
 export const signoutRequest = async () => {
-  await auth.post(
-    '/signout',
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-      }
-    }
-  );
+  await auth.post('/signout', {});
 };
 
 export const renewAccessTokenRequest = async () => {
   return auth.post('/token', {
-    token: localStorage.getItem('refreshToken')
+    token: getRefreshToken()
   });
 };
 
 export const getProjectsRequest = async () => {
-  return projects.get('', {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  });
+  return projects.get('');
 };
 
 export const getProjectRequest = async projectId => {
-  return projects.get(`/${projectId}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  });
+  return projects.get(`/${projectId}`);
 };
 
 export const newProjectRequest = async formValues => {
-  return projects.post(
-    '',
-    {
-      ...formValues
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-      }
-    }
-  );
+  return projects.post('', {
+    ...formValues
+  });
 };
 
 export const updateProjectRequest = async (projectId, formValues) => {
-  return projects.put(`/${projectId}`, formValues, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  });
+  return projects.put(`/${projectId}`, formValues);
 };
 
 export const deleteProjectRequest = async projectId => {
-  await projects.delete(`/${projectId}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  });
+  await projects.delete(`/${projectId}`);
 };
 
 export const getTasksRequest = async projectId => {
-  return tasks.get(`/${projectId}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  });
+  return tasks.get(`/${projectId}`);
 };
 
 export const getTaskRequest = async taskId => {
-  return tasks.get(`/show/${taskId}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  });
+  return tasks.get(`/show/${taskId}`);
 };
 
 export const newTaskRequest = async (formValues, projectId) => {
-  return tasks.post(
-    '',
-    {
-      ...formValues,
-      projectId
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-      }
-    }
-  );
+  return tasks.post('', {
+    ...formValues,
+    projectId
+  });
 };
 
 export const updateTaskRequest = async (taskId, formValues) => {
-  return tasks.put(`/${taskId}`, formValues, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  });
+  return tasks.put(`/${taskId}`, formValues);
 };
 
 export const deleteTaskRequest = async taskId => {
-  await tasks.delete(`/${taskId}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  });
+  await tasks.delete(`/${taskId}`);
 };
