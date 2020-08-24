@@ -35,7 +35,7 @@ projects.interceptors.response.use(
         originalRequest.headers[
           'Authorization'
         ] = `Bearer ${res.data.accessToken}`;
-        return auth(originalRequest);
+        return axios(originalRequest);
       } catch (err) {
         return Promise.reject(err);
       }
