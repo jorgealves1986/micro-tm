@@ -8,7 +8,7 @@ On windows you can achieve this by going to C:\Windows\System32\drivers\etc, edi
 
 1.3 - Install ingress-nginx on your kubernetes context:
 Ingress-nginx instalation (https://kubernetes.github.io/ingress-nginx/deploy/):
-For windows/mac: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml
+For windows/mac: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.1/deploy/static/provider/cloud/deploy.yaml
 
 1.4 - Create a json web token secret on kubernetes:
 kubectl create secret generic jwt-secret --from-literal=JWT_KEY=<the_actual_secret>
