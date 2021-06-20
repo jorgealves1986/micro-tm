@@ -29,8 +29,6 @@ import {
   UPDATE_TASK,
   DELETE_TASK
 } from './types';
-import { successNotification, errorNotification } from './notifications';
-import errorMessageCompiler from '../helpers/errorMessageCompiler';
 import {
   setRefreshToken,
   setAccessToken,
@@ -54,13 +52,11 @@ export const signup = formProps => async dispatch => {
       payload: true
     });
     history.push('/projects/list');
-    dispatch(successNotification('Welcome to Task Manager'));
   } catch (error) {
     dispatch({
       type: AUTH_ERROR,
       payload: error.response.data.errors || null
     });
-    dispatch(errorNotification(errorMessageCompiler(error)));
     console.error(error);
   }
 };
@@ -79,13 +75,11 @@ export const signin = formProps => async dispatch => {
       payload: true
     });
     history.push('/projects/list');
-    dispatch(successNotification('You just logged in'));
   } catch (error) {
     dispatch({
       type: AUTH_ERROR,
       payload: error.response.data.errors || null
     });
-    dispatch(errorNotification(errorMessageCompiler(error)));
     console.error(error);
   }
 };
@@ -107,7 +101,6 @@ export const signout = () => {
         type: AUTH_ERROR,
         payload: error.response.data.errors || null
       });
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
@@ -145,7 +138,6 @@ export const renewAccessToken = () => async dispatch => {
       type: AUTH_USER,
       payload: false
     });
-    dispatch(errorNotification(errorMessageCompiler(error)));
     console.error(error);
   }
 };
@@ -164,7 +156,6 @@ export const getProjects = () => {
 
       dispatch({ type: GET_PROJECTS, payload: response.data });
     } catch (error) {
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
@@ -176,7 +167,6 @@ export const getProject = projectId => async dispatch => {
 
     dispatch({ type: GET_PROJECT, payload: response.data });
   } catch (error) {
-    dispatch(errorNotification(errorMessageCompiler(error)));
     console.error(error);
   }
 };
@@ -188,9 +178,7 @@ export const newProject = formValues => {
 
       dispatch({ type: NEW_PROJECT, payload: response.data });
       history.push('/projects/list');
-      dispatch(successNotification(`Project ${formValues.name} created`));
     } catch (error) {
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
@@ -203,11 +191,7 @@ export const updateProject = (projectId, formValues) => {
 
       dispatch({ type: UPDATE_PROJECT, payload: response.data });
       history.push('/projects/list');
-      dispatch(
-        successNotification(`Project ${response.data.name} has been updated`)
-      );
     } catch (error) {
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
@@ -220,9 +204,7 @@ export const deleteProject = projectId => {
 
       dispatch({ type: DELETE_PROJECT, payload: projectId });
       history.push('/projects/list');
-      dispatch(successNotification('Project deleted'));
     } catch (error) {
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
@@ -235,7 +217,6 @@ export const getTasks = projectId => {
 
       dispatch({ type: GET_TASKS, payload: response.data });
     } catch (error) {
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
@@ -248,7 +229,6 @@ export const getTask = taskId => {
 
       dispatch({ type: GET_TASK, payload: response.data });
     } catch (error) {
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
@@ -261,9 +241,7 @@ export const newTask = (formValues, projectId) => {
 
       dispatch({ type: NEW_TASK, payload: response.data });
       history.push(`/projects/${projectId}`);
-      dispatch(successNotification(`Task created`));
     } catch (error) {
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
@@ -277,9 +255,7 @@ export const updateTask = (taskId, formValues) => {
       dispatch({ type: UPDATE_TASK, payload: response.data });
 
       history.push(`/projects/${formValues.projectId}`);
-      dispatch(successNotification('Task updated'));
     } catch (error) {
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };
@@ -293,9 +269,7 @@ export const deleteTask = (taskId, projectId) => {
       dispatch({ type: DELETE_TASK, payload: taskId });
 
       history.push(`/projects/${projectId}`);
-      dispatch(successNotification('Task deleted'));
     } catch (error) {
-      dispatch(errorNotification(errorMessageCompiler(error)));
       console.error(error);
     }
   };

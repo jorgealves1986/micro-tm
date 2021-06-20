@@ -1,9 +1,9 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-service
+  name: ingress-srv
   annotations:
-    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
@@ -11,18 +11,30 @@ spec:
       http:
         paths:
           - path: /api/users/?(.*)
+            pathType: Prefix
             backend:
-              serviceName: auth-srv
-              servicePort: 3000
+              service:
+                name: auth-srv
+                port:
+                  number: 3000
           - path: /api/projects/?(.*)
+            pathType: Prefix
             backend:
-              serviceName: projects-srv
-              servicePort: 3000
+              service:
+                name: projects-srv
+                port:
+                  number: 3000
           - path: /api/tasks/?(.*)
+            pathType: Prefix
             backend:
-              serviceName: tasks-srv
-              servicePort: 3000
+              service:
+                name: tasks-srv
+                port:
+                  number: 3000
           - path: /?(.*)
+            pathType: Prefix
             backend:
-              serviceName: client-srv
-              servicePort: 3000
+              service:
+                name: client-srv
+                port:
+                  number: 3000

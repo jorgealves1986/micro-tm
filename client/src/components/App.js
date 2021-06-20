@@ -1,8 +1,6 @@
-import 'react-redux-notify/dist/ReactReduxNotify.css';
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Notify } from 'react-redux-notify';
 import { renewAccessToken } from '../actions';
 import Header from './Header';
 import Welcome from './Welcome';
@@ -18,14 +16,13 @@ import TaskCreate from './tasks/TaskCreate';
 import TaskEdit from './tasks/TaskEdit';
 import TaskDelete from './tasks/TaskDelete';
 
-const App = props => {
-  if (performance.navigation && performance.navigation.type === 1) {
+const App = (props) => {
+  /* if (performance.navigation && performance.navigation.type === 1) {
     props.renewAccessToken();
-  }
+  } */
 
   return (
     <div className="ui container">
-      <Notify position="BottomRight" />
       <Header />
       <Switch>
         <Route path="/" exact component={Welcome} />
